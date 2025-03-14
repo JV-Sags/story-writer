@@ -5,17 +5,16 @@ class Story(models.Model):
     content = models.TextField()
     is_published = models.BooleanField(default=False)
     likes = models.IntegerField(default=0)
-    bookmarks = models.IntegerField(default=0)  # Track bookmarks
+    bookmarks = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
-class Character(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    story = models.ForeignKey(Story, related_name='characters', on_delete=models.CASCADE)
-
     def __str__(self):
-        return self.name
+        return self.title
+
+    def get_page_count(self):
+        words_per_page = 500
+        word_count = len(self.content.split())
+        return max(1, (word_count + words_per_page - 1) // words_per_page)
 
 class StorySettings(models.Model):
     story = models.OneToOneField(Story, related_name='settings', on_delete=models.CASCADE)
@@ -26,3 +25,10 @@ class StorySettings(models.Model):
     def __str__(self):
         return f"Settings for {self.story.title}"
 
+class Character(models.Model):
+    name = models.CharField(max_length=100)
+    background = models.TextField()
+    story = models.ForeignKey(Story, related_name='characters', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name

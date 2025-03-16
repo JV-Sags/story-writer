@@ -1,30 +1,32 @@
 from rest_framework import serializers
-from .models import Story, Character, StorySettings
+from .models import Story, Character, StorySettings, StorySetting
+from .models import Item
 
+# Serializer for the Story model
+class StorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Story
+        fields = '__all__'
+
+# Serializer for the Character model
+class CharacterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Character
+        fields = '__all__'
+
+# Serializer for the StorySettings model
 class StorySettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = StorySettings
         fields = '__all__'
 
-class StorySerializer(serializers.ModelSerializer):
-    page_count = serializers.SerializerMethodField()
-    settings = StorySettingsSerializer()
-
+# Serializer for the StorySetting model (Locations)
+class StorySettingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Story
+        model = StorySetting
         fields = '__all__'
-
-    def get_page_count(self, obj):
-        return obj.get_page_count()
-
-    def create(self, validated_data):
-        settings_data = validated_data.pop('settings', None)
-        story = Story.objects.create(**validated_data)
-        if settings_data:
-            StorySettings.objects.create(story=story, **settings_data)
-        return story
-
-class CharacterSerializer(serializers.ModelSerializer):
+        
+class ItemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Character
+        model = Item
         fields = '__all__'
